@@ -1,19 +1,81 @@
 import * as React from "react";
 import TemplateTree, { ICONS1_ID, TreeToggleHandler } from "../components/TemplateTree";
 
+const ICONS1_URL = "http://localhost:8088/get-file";
+
+//Helper to transform ArrayBuffer to Base64 string for loading
+function toBase64(buf: ArrayBuffer): string {
+  let bin = "";
+  const bytes = new Uint8Array(buf);
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin);
+}
+
 export default function LibraryController() {
   const [selected, setSelected] = React.useState<string | null>(null);
-
-  const onToggle: TreeToggleHandler = (_e, id, isSel) => {
+  const [busy, setBusy] = React.useState(false);
+    
+  //Main Calls for Functions
+  const onToggle: TreeToggleHandler = async (_e, id, isSel) => {
     setSelected(isSel ? id : null);
-    if (id === ICONS1_ID && isSel) console.log("HelloWorld");
+    if (isSel && id === ICONS1_ID) {
+      await loadIcons1();
+    } else if (!isSel && id === "cpl/kpi-cards") {
+      console.log("TEst");
+      await deleteSheetIfExists();
+    }
   };
+
+  /* ---------------------------LOAD SHEET---------------------------*/
+  const loadIcons1 = async () => {
+    setBusy(true);
+    try {
+      const res = await fetch(ICONS1_URL, { mode: "cors" });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const base64 = toBase64(await res.arrayBuffer());
+
+      await Excel.run(async (ctx) => {
+        const wb = ctx.workbook;
+
+        // insert all worksheets at end
+        wb.insertWorksheetsFromBase64(base64, {
+          sheetNamesToInsert: [], // empty => all
+          positionType: Excel.WorksheetPositionType.end,
+        });
+        await ctx.sync();
+      });
+    } catch (e) {
+      console.error("Icons1 load failed:", e);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  /* ---------------------------CLOSE/DELETE LAST SHEET---------------------------*/
+
+  async function deleteSheetIfExists() {
+    await Excel.run(async (ctx) => {
+      const sheets = ctx.workbook.worksheets;
+      sheets.load("items/name");
+      await ctx.sync();
+      const allSheets = sheets.items;
+      console.log(
+        "All sheets:",
+        allSheets.map((s) => s.name)
+      );
+      if (allSheets.length > 0) {
+        const lastSheet = allSheets[allSheets.length - 1];
+        lastSheet.delete();
+        await ctx.sync();
+      }
+    });
+  }
 
   return (
     <>
       <TemplateTree onItemSelectionToggle={onToggle} />
       <div style={{ marginTop: 8, fontFamily: "monospace", textAlign: "center" }}>
-        {selected ?? "—"}
+        {busy ? "working..." : (selected ?? "—")}
       </div>
     </>
   );
