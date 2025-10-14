@@ -17,14 +17,22 @@ export default function LibraryController() {
     
   //Main Calls for Functions
   const onToggle: TreeToggleHandler = async (_e, id, isSel) => {
-    setSelected(isSel ? id : null);
-    if (isSel && id === ICONS1_ID) {
-      await loadIcons1();
-    } else if (!isSel && id === "cpl/kpi-cards") {
-      console.log("TEst");
-      await deleteSheetIfExists();
-    }
+    if(!isSel) return;
+    setSelected(id);
   };
+
+  React.useEffect(() => {
+    if (!selected) return;
+    if (selected === ICONS1_ID) {
+      (async () => {
+        await loadIcons1();
+      })();
+    } else {
+      (async () => {
+        await deleteSheetIfExists();
+      })();
+    }
+  }, [selected]);
 
   /* ---------------------------LOAD SHEET---------------------------*/
   const loadIcons1 = async () => {
@@ -51,7 +59,7 @@ export default function LibraryController() {
     }
   };
 
-  /* ---------------------------CLOSE/DELETE LAST SHEET---------------------------*/
+  /* ---------------------------CLOSE LAST SHEET---------------------------*/
 
   async function deleteSheetIfExists() {
     await Excel.run(async (ctx) => {
@@ -74,7 +82,7 @@ export default function LibraryController() {
   return (
     <>
       <TemplateTree onItemSelectionToggle={onToggle} />
-      <div style={{ marginTop: 8, fontFamily: "monospace", textAlign: "center" }}>
+      <div style={{ marginTop: 8, fontFamily: "monospace", fontSize: "20", fontWeight: "bold",textAlign: "center", color: "green" }}>
         {busy ? "working..." : (selected ?? "—")}
       </div>
     </>
