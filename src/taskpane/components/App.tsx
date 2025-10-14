@@ -5,6 +5,7 @@ import { Ribbon24Regular, LockOpen24Regular, DesignIdeas24Regular } from "@fluen
 import { insertText } from "../taskpane";
 import HelloWorld from "../components/HelloWorld";
 import LibraryController from "./LibraryController";
+import InsertSelection from "./InsertSelection";
 
 interface AppProps {
   title: string;
@@ -24,7 +25,7 @@ const App: React.FC<AppProps> = () => {
   return (
     <div className={styles.root}>
       <LibraryController />
-      {/* <HelloWorld /> */}
+      <InsertSelection />
     </div>
   );
 };
