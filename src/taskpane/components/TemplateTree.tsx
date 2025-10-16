@@ -21,28 +21,32 @@ export default function TemplateTree({
 
   return (
     <div>
-      <ToggleButtonGroup
-        value={lib}
-        exclusive
-        onChange={(_, v) => v && setLib(v)}
-        aria-label="library switch"
-        sx={{
-          backgroundColor: "#eee",
-          borderRadius: 2,
-          p: 0.5,
-          "& .MuiToggleButton-root": {
-            textTransform: "none",
-            color: "#666",
-            border: "1px solid transparent",
-            borderRadius: 1.5,
-            px: 2,
-            "&.Mui-selected": { backgroundColor: "#fff", borderColor: "#d9d9d9" },
-          },
-        }}
-      >
-        <ToggleButton value="cpl">ChartPanda Library</ToggleButton>
-        <ToggleButton value="priv">Private Library</ToggleButton>
-      </ToggleButtonGroup>
+      <div style={{ width: "90%", margin: "0 auto" }}>
+        <ToggleButtonGroup
+          value={lib}
+          exclusive
+          onChange={(_, v) => v && setLib(v)}
+          aria-label="library switch"
+          fullWidth
+          sx={{
+        backgroundColor: "#eee",
+        borderRadius: 2,
+        p: 0.5,
+        "& .MuiToggleButton-root": {
+          textTransform: "none",
+          color: "#666",
+          border: "1px solid transparent",
+          borderRadius: 1.5,
+          px: 2,
+          height: 45,
+          "&.Mui-selected": { backgroundColor: "#fff", borderColor: "#d9d9d9" },
+        },
+          }}
+        >
+          <ToggleButton value="cpl">ChartPanda Library</ToggleButton>
+          <ToggleButton value="priv">Private Library</ToggleButton>
+        </ToggleButtonGroup>
+      </div>
 
       <div style={{ marginTop: 12 }}>
         {lib === "cpl" ? (

@@ -6,6 +6,7 @@ import { insertText } from "../taskpane";
 import HelloWorld from "../components/HelloWorld";
 import LibraryController from "./LibraryController";
 import InsertSelection from "./InsertSelection";
+import Header from "./Header";
 
 interface AppProps {
   title: string;
@@ -24,6 +25,7 @@ const App: React.FC<AppProps> = () => {
 
   return (
     <div className={styles.root}>
+      <Header/>
       <LibraryController />
       <InsertSelection />
     </div>
