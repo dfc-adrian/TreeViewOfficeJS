@@ -27,7 +27,7 @@
         "default": "Ctrl+Alt+Down",
         "mac": "Command+Shift+Down",
         "web": "Ctrl+Alt+2",
-        "windows": "Ctrl+Alt+Up"
+        "windows": "Ctrl+Alt+Down"
       }
     }
   ]
