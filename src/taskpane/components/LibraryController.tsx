@@ -11,7 +11,24 @@ function toBase64(buf: ArrayBuffer): string {
   return btoa(bin);
 }
 
-export default function LibraryController() {
+interface Folder {
+  id: string;
+  name: string;
+  parent_id: string | null;
+}
+
+interface File {
+  id: string;
+  name: string;
+  folder_id: string | null;
+}
+
+interface LibraryControllerProps {
+  folders: Folder[];
+  files: File[];
+}
+
+export default function LibraryController({ folders, files }: LibraryControllerProps) {
   const [selected, setSelected] = React.useState<string | null>(null);
   const [busy, setBusy] = React.useState(false);
     
@@ -81,7 +98,7 @@ export default function LibraryController() {
 
   return (
     <>
-      <TemplateTree onItemSelectionToggle={onToggle} />
+      <TemplateTree onItemSelectionToggle={onToggle} folders={folders} files={files} />
       <div style={{ marginTop: 8, fontFamily: "monospace", fontSize: "20", fontWeight: "bold",textAlign: "center", color: "green" }}>
         {busy ? "working..." : (selected ?? "—")}
       </div>

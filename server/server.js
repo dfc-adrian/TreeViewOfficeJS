@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 
 app.get("/get-file", (req, res) => {
-  const filePath = path.join(__dirname, "storage", "TestFileOffice.xlsx");
+  const filePath = path.join(__dirname, "storage", "TestFile.xltx");
   res.sendFile(filePath);
 });
 

@@ -1,8 +1,6 @@
 import * as React from "react";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
 import { TreeItem } from "@mui/x-tree-view/TreeItem";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import FolderIcon from "@mui/icons-material/Folder";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
@@ -15,27 +13,39 @@ export type TreeToggleHandler = (
 
 export const ICONS1_ID = "cpl/icons1";
 
+interface Folder {
+  id: string;
+  name: string;
+  parent_id: string | null;
+}
+
+interface File {
+  id: string;
+  name: string;
+  folder_id: string | null;
+}
+
 type Props = {
   onItemSelectionToggle?: TreeToggleHandler;
+  folders: Folder[];
+  files: File[];
 };
 
 export default function TemplateTree(props: Props)
  {
-  const { onItemSelectionToggle } = props;
-  const [lib, setLib] = React.useState<"cpl" | "priv">("cpl");
-  
+  const { onItemSelectionToggle, folders, files } = props;
   const [expanded, setExpanded] = React.useState<string[]>([]);
 
-const Label = ({ id, text }: { id: string; text: string }) => {
+const FolderLabel = ({ id, text }: { id: string; text: string }) => {
   const isOpen = expanded.includes(id);
   return (
     <span
       style={{
         display: "flex",
-        alignItems: "center", 
-        gap: 6, 
-        lineHeight: 1.4, 
-        paddingTop: 1, 
+        alignItems: "center",
+        gap: 6,
+        lineHeight: 1.4,
+        paddingTop: 1,
       }}
     >
       {isOpen ? (
@@ -48,94 +58,62 @@ const Label = ({ id, text }: { id: string; text: string }) => {
   );
 };
 
+const FileLabel = ({ text }: { text: string }) => {
+  return (
+    <span
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        lineHeight: 1.4,
+        paddingTop: 1,
+      }}
+    >
+      <InsertDriveFileIcon sx={{ fontSize: 18, color: "#666" }} />
+      <span>{text}</span>
+    </span>
+  );
+};
+
+
+  // Get top-level folders (parent_id is null)
+  const topLevelFolders = folders.filter(f => f.parent_id === null);
+
+  // Get top-level files (folder_id is null)
+  const topLevelFiles = files.filter(f => f.folder_id === null);
+
+  // Show empty state if no data
+  if (folders.length === 0 && files.length === 0) {
+    return (
+      <div style={{ padding: '24px', textAlign: 'center', color: '#999' }}>
+        Melden Sie sich an, um Ihre Dateien zu sehen
+      </div>
+    );
+  }
 
   return (
     <div>
-      <div style={{ width: "90%", margin: "0 auto" }}>
-        <ToggleButtonGroup
-          value={lib}
-          exclusive
-          onChange={(_, v) => v && setLib(v)}
-          aria-label="library switch"
-          fullWidth
-          sx={{
-            backgroundColor: "#eee",
-            borderRadius: 2,
-            p: 0.5,
-            "& .MuiToggleButton-root": {
-              textTransform: "none",
-              color: "#666",
-              border: "1px solid transparent",
-              borderRadius: 1.5,
-              px: 2,
-              height: 45,
-              "&.Mui-selected": { backgroundColor: "#fff", borderColor: "#d9d9d9" },
-            },
-          }}
-        >
-          <ToggleButton value="cpl">ChartPanda Library</ToggleButton>
-          <ToggleButton value="priv">Private Library</ToggleButton>
-        </ToggleButtonGroup>
-      </div>
-
       <div style={{ marginTop: 12 }}>
-        {lib === "cpl" ? (
-          <SimpleTreeView
-            onItemSelectionToggle={onItemSelectionToggle}
-            expandedItems={expanded}
-            onExpandedItemsChange={(_, ids) => setExpanded(ids as string[])}
-          >
-            <TreeItem itemId="cpl" label={<Label id="cpl" text="ChartPanda Library" />}>
-              <TreeItem itemId="cpl/buttons" label="Buttons" />
-              <TreeItem
-                itemId={ICONS1_ID}
-                label={
-                  <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <InsertDriveFileIcon sx={{ fontSize: 18, color: "#555" }} />
-                    Icons1
-                  </span>
-                }
-              />
-              <TreeItem itemId="cpl/kpi-cards" label="KPI Cards" />
-              <TreeItem itemId="cpl/nochcharts" label="NochCharts" />
-              <TreeItem itemId="cpl/nocheine" label="NochEine" />
-              <TreeItem itemId="cpl/starters" label="Starters" />
-              <TreeItem itemId="cpl/tables" label={<Label id="cpl/tables" text="Tables" />}>
-                <TreeItem
-                  itemId="cpl/tables/test"
-                  label={<Label id="cpl/tables/test" text="Test" />}
-                >
-                  <TreeItem itemId="cpl/tables/test/file1" label="File1" />
-                </TreeItem>
-              </TreeItem>
-            </TreeItem>
-          </SimpleTreeView>
-        ) : (
-          <SimpleTreeView
-            onItemSelectionToggle={onItemSelectionToggle}
-            expandedItems={expanded}
-            onExpandedItemsChange={(_, ids) => setExpanded(ids as string[])}
-          >
-            <TreeItem itemId="private" label={<Label id="private" text="Private Library" />}>
-              <TreeItem itemId="private/custom-buttons" label="Custom Buttons" />
-              <TreeItem itemId="private/icons2" label="Icons2" />
-              <TreeItem itemId="private/score-cards" label="Score Cards" />
-              <TreeItem itemId="private/altcharts" label="AltCharts" />
-              <TreeItem itemId="private/extra" label="Extra" />
-              <TreeItem
-                itemId="private/templates"
-                label={<Label id="private/templates" text="Templates" />}
-              >
-                <TreeItem
-                  itemId="private/templates/sample"
-                  label={<Label id="private/templates/sample" text="Sample" />}
-                >
-                  <TreeItem itemId="private/templates/sample/fileA" label="FileA" />
-                </TreeItem>
-              </TreeItem>
-            </TreeItem>
-          </SimpleTreeView>
-        )}
+        <SimpleTreeView
+          onItemSelectionToggle={onItemSelectionToggle}
+          expandedItems={expanded}
+          onExpandedItemsChange={(_, ids) => setExpanded(ids as string[])}
+        >
+          {topLevelFolders.map(folder => (
+            <TreeItem
+              key={folder.id}
+              itemId={folder.id}
+              label={<FolderLabel id={folder.id} text={folder.name} />}
+            />
+          ))}
+          {topLevelFiles.map(file => (
+            <TreeItem
+              key={file.id}
+              itemId={file.id}
+              label={<FileLabel text={file.name} />}
+            />
+          ))}
+        </SimpleTreeView>
       </div>
     </div>
   );

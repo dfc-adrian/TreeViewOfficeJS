@@ -60,6 +60,7 @@
                   <Action xsi:type="ShowTaskpane">
                     <TaskpaneId>ButtonId1</TaskpaneId>
                     <SourceLocation resid="Taskpane.Url"/>
+                    <RequestedWidth>700</RequestedWidth>
                   </Action>
                 </Control>
               </Group>
@@ -90,5 +91,4 @@
       </bt:LongStrings>
     </Resources>
   </VersionOverrides>
-  <ExtendedOverrides Url="https://localhost:3000/shortcuts.json"></ExtendedOverrides>
 </OfficeApp>
